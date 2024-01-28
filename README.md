@@ -21,8 +21,8 @@
     - #balanced?: returns a boolean value indicating whether the height of the subtrees for each node is
         not more than 1
     - #rebalance: rebalances the Tree if #balanced? returns false
-    **Methods that accept a block**
-    _returns an array is no block is given_
+**Methods that accept a block**
+_returns an array is no block is given_
     - #level_order: traverses the Tree in breadth-first order
     - #preorder: traverses the Tree in depth-first order of Data, Left, then Right
     - #inorder: traverses the Tree in depth-first order of Left, Data then Right
