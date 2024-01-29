@@ -5,7 +5,7 @@ class Tree
   @@arr_capacity = 5 + rand(15)
 
   def initialize()
-    self.values = (1..9).to_a
+    self.values = (1..Tree.arr_capacity).to_a
     self.root = build_tree(values)
   end
 
@@ -18,11 +18,9 @@ class Tree
     return if arr.empty?
     arr = arr.sort.uniq
     middle = arr.length / 2
-
     tree_root = Node.new(arr[middle])
     tree_root.left = build_tree(arr[0...middle])
     tree_root.right = build_tree(arr[middle + 1..])
-
     return tree_root
   end
 
@@ -47,7 +45,6 @@ class Tree
 
   def delete(temp_root = self.root, value)
     return temp_root if temp_root.nil?
-
     if temp_root.data > value
       temp_root.left = delete(temp_root.left, value)
       return temp_root
@@ -55,7 +52,6 @@ class Tree
       temp_root.right = delete(temp_root.right, value)
       return temp_root
     end
-
     if temp_root.left.nil?
       new_root = temp_root.right
       temp_root = nil
@@ -92,7 +88,7 @@ class Tree
   end
 
   def height(temp_root = self.root, value)
-    return 0 if temp_root.nil?
+    return -1 if temp_root.nil?
     # the amount of jumps it takes to get to a leaf node from the
     # node with the given value
     # so let's say value is 8
@@ -136,26 +132,39 @@ class Tree
         root_left = root_left.left unless root_left.nil?
         root_right = root_right.right unless root_right.nil?
       end
-      # until left_sub_left.nil? || left_sub_right.nil? && right_sub_left.nil? || right_sub_right.nil?
-      #   l_count += 1 unless left_sub_left.nil? && right_sub_left.nil?
-      #   r_count += 1 unless left_sub_right.nil? && right_sub_right.nil?
-      #   left_sub_left = left_sub_left.left
-      #   left_sub_right = left_sub_right.right
-      #   right_sub_left = right_sub_left.left
-      #   right_sub_right = right_sub_right.right
-      # end
       temp_root.node_height = l_count >= r_count ? l_count : r_count
       return temp_root.node_height
     end
-
   end
 
-  def depth(node)
-
+  def depth(temp_root = self.root, value)
+    # the distance from the root to the node with the given value
+    return -1 if temp_root.nil?
+    distance = -1
+    return distance + 1 if temp_root.data == value
+    distance = depth(temp_root.left, value)
+    return distance + 1 if distance >= 0
+    distance = depth(temp_root.right, value)
+    return distance + 1 if distance >= 0
+    return distance
   end
 
   def balanced?
+    # checks whether the height difference between the 2 subtrees
+    # is more than 1
+    # I need the leaf node from each side (L/R)
+    left_sub = self.root.left
+    right_sub = self.root.right
+    until left_sub.nil? && right_sub.nil?
+      left_leaf = left_sub.data unless left_sub.nil?
+      left_sub = left_sub.left unless left_sub.nil?
+      right_leaf = right_sub.data unless right_sub.nil?
+      right_sub = right_sub.right unless right_sub.nil?
+    end
+    left_height = self.height(left_leaf)
+    right_height = self.height(right_leaf)
 
+    return left_height - right_height <= 1
   end
 
   def rebalance
@@ -163,19 +172,44 @@ class Tree
   end
 
   # methods that accept a block
-  def level_order
+  def level_order(temp_root = self.root)
+    # breadth-first: I need a queue
+    # loop starting at root node, process then enqueue left then right
+    # after processing, dequeue the node
+    # array methods to emulate queue:
+    # push and shift
+    if block_given?
+      queue = []
+      queue.push(temp_root)
+      while !queue.empty?
+        current = queue.shift
+        yield(current)
+        queue.push(current.left) unless current.left.nil?
+        queue.push(current.right) unless current.right.nil?
+      end
+    else
+      node_values = []
+      queue = []
+      queue.push(temp_root)
+      while !queue.empty?
+        current = queue.shift
+        node_values << current.data
+        queue.push(current.left) unless current.left.nil?
+        queue.push(current.right) unless current.right.nil?
+      end
+      node_values
+    end
+  end
+
+  def preorder(temp_root = self.root)
     yield
   end
 
-  def preorder
+  def inorder(temp_root = self.root)
     yield
   end
 
-  def inorder
-    yield
-  end
-
-  def postorder
+  def postorder(temp_root = self.root)
     yield
   end
 end
