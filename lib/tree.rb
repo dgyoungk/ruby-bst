@@ -78,7 +78,75 @@ class Tree
     end
   end
 
-  def height(node)
+  def find(temp_root = self.root, value)
+    return temp_root if temp_root.nil?
+    # return temp_root if temp_root.data == value
+    if temp_root.data > value
+      temp_root.left = find(temp_root.left, value)
+    elsif temp_root.data < value
+      temp_root.right = find(temp_root.right, value)
+    else
+      new_root = temp_root
+      return new_root
+    end
+  end
+
+  def height(temp_root = self.root, value)
+    return 0 if temp_root.nil?
+    # the amount of jumps it takes to get to a leaf node from the
+    # node with the given value
+    # so let's say value is 8
+    # once the node with value 8 is found
+    # loop through its subtrees and increment 1 if one is present
+    # for both left and right, return the greater of the 2
+    if temp_root.data > value
+      temp_root.node_height = height(temp_root.left, value)
+      return temp_root.node_height
+    elsif temp_root.data < value
+      temp_root.node_height = height(temp_root.right, value)
+      return temp_root.node_height
+    end
+    return 0 if temp_root.left.nil? && temp_root.right.nil?
+    l_count = 0
+    r_count = 0
+    # case where the node containing the value has one nil subtree
+    if temp_root.left.nil? || temp_root.right.nil?
+      current = temp_root.left.nil? ? temp_root.right : temp_root.left
+      if current.left.nil? && current.right.nil?
+        temp_root.node_height = 1
+        return temp_root.node_height
+      end
+      root_left = current.left
+      root_right = current.right
+      until root_left.nil? && root_right.nil?
+        l_count += 1 unless root_left.nil?
+        r_count += 1 unless root_right.nil?
+        root_left = root_left.left
+        root_right = root_right.right
+      end
+      temp_root.node_height = l_count >= r_count ? l_count : r_count
+      return temp_root.node_height
+    else
+      # case where the node containing the value has both subtress (L/R)
+      root_left = temp_root.left
+      root_right = temp_root.right
+      while !(root_left.nil? && root_right.nil?)
+        l_count += 1 unless root_left.nil?
+        r_count += 1 unless root_right.nil?
+        root_left = root_left.left unless root_left.nil?
+        root_right = root_right.right unless root_right.nil?
+      end
+      # until left_sub_left.nil? || left_sub_right.nil? && right_sub_left.nil? || right_sub_right.nil?
+      #   l_count += 1 unless left_sub_left.nil? && right_sub_left.nil?
+      #   r_count += 1 unless left_sub_right.nil? && right_sub_right.nil?
+      #   left_sub_left = left_sub_left.left
+      #   left_sub_right = left_sub_right.right
+      #   right_sub_left = right_sub_left.left
+      #   right_sub_right = right_sub_right.right
+      # end
+      temp_root.node_height = l_count >= r_count ? l_count : r_count
+      return temp_root.node_height
+    end
 
   end
 
