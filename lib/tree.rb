@@ -176,8 +176,6 @@ class Tree
     # breadth-first: I need a queue
     # loop starting at root node, process then enqueue left then right
     # after processing, dequeue the node
-    # array methods to emulate queue:
-    # push and shift
     if block_given?
       queue = []
       queue.push(temp_root)
@@ -200,7 +198,7 @@ class Tree
       node_values
     end
   end
-
+# TODO: implement the depth-first traversal methods
   def preorder(temp_root = self.root)
     yield
   end
