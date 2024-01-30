@@ -1,6 +1,6 @@
 class Node
   include Comparable
-  attr_accessor :data, :left, :right, :node_height
+  attr_accessor :data, :left, :right
   def <=>(other)
     self.data <=> other.data
   end
