@@ -11,8 +11,7 @@
     - attributes: root
 
 ### Methods
-    - #build_tree: builds the Tree of Node objects from the array of data;
-        returns the root node
+    - #build_tree: builds the Tree of Node objects from the array of data
     - #insert(value): inserts the given value to the Tree
     - #delete(value): deletes the given value from the Tree
     - #find(value): returns the Node with the given value from the Tree; returns nil if not found
