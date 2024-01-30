@@ -15,7 +15,7 @@
         returns the root node
     - #insert(value): inserts the given value to the Tree
     - #delete(value): deletes the given value from the Tree
-    - #find(value): returns the given value from the Tree; returns nil if not found
+    - #find(value): returns the given node with the given value from the Tree; returns nil if not found
     - #height(Node): returns the number of edges from a given Node to the leaf Node 
     - #depth(Node): returns the number of edges from a given Node to the root Node
     - #balanced?: returns a boolean value indicating whether the height of the subtrees for each node is
@@ -30,3 +30,5 @@
     
 
 Author: Daniel Kwon 2024
+
+**method #pretty_print is cited from TOP's BST Project page**
