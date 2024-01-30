@@ -2,12 +2,11 @@ require_relative 'tree.rb'
 
 
 bst = Tree.new
-
-puts %(Initial tree output of size 15: )
+puts %(Values to generate the BST with:)
+p bst.values
+puts %(\nInitial tree output:)
 puts
 bst.pretty_print
-
-
 
 puts %(\nUpdated tree after inserting 24, 42, 22: )
 bst.insert(24)
