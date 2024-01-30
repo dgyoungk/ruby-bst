@@ -75,13 +75,12 @@ class Tree
   def find(temp_root = self.root, value)
     return temp_root if temp_root.nil?
     # return temp_root if temp_root.data == value
-    if temp_root.data > value
-      temp_root.left = find(temp_root.left, value)
-    elsif temp_root.data < value
-      temp_root.right = find(temp_root.right, value)
+    if value < temp_root.data
+      temp_root = find(temp_root.left, value)
+    elsif value > temp_root.data
+      temp_root = find(temp_root.right, value)
     else
-      new_root = temp_root
-      return new_root
+      return temp_root
     end
   end
 
