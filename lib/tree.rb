@@ -2,13 +2,17 @@ require_relative 'node.rb'
 
 class Tree
   attr_accessor :root, :values
-  attr_reader :arr_capacity
-
 
   def initialize()
-    @arr_capacity = 5 + rand(15)
-    self.values = (1..15).to_a
+    self.values = create_array
     self.root = build_tree(values)
+  end
+
+  def create_array
+    return 30.times.with_object([]) do |n, arr|
+      arr << n + rand(10)
+      arr
+    end
   end
 
   # sort and remove any duplicates before building the tree
@@ -74,7 +78,6 @@ class Tree
 
   def find(temp_root = self.root, value)
     return temp_root if temp_root.nil?
-    # return temp_root if temp_root.data == value
     if value < temp_root.data
       temp_root = find(temp_root.left, value)
     elsif value > temp_root.data
@@ -89,10 +92,8 @@ class Tree
     left_h = height(value, temp_root.left)
     right_h = height(value, temp_root.right)
     if left_h > right_h
-      height =  left_h + 1
       return left_h + 1
     else
-      height = right_h + 1
       return right_h + 1
     end
   end
@@ -148,7 +149,7 @@ class Tree
     end
     return %(traversal finished)
   end
-# TODO: implement the depth-first traversal methods
+
   def preorder(current = self.root, node_values = [], &block)
     # preorder follows the DLR route (Data, Left then Right)
     unless block_given?
