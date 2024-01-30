@@ -7,7 +7,7 @@ class Tree
 
   def initialize()
     @arr_capacity = 5 + rand(15)
-    self.values = (1..arr_capacity).to_a
+    self.values = (1..15).to_a
     self.root = build_tree(values)
   end
 
@@ -111,25 +111,18 @@ class Tree
   end
 
   def balanced?
-    # checks whether the height difference between the 2 subtrees
-    # is more than 1
-    # I need the leaf node from each side (L/R)
-    left_sub = self.root.left
-    right_sub = self.root.right
-    until left_sub.nil? && right_sub.nil?
-      left_leaf = left_sub.data unless left_sub.nil?
-      left_sub = left_sub.left unless left_sub.nil?
-      right_leaf = right_sub.data unless right_sub.nil?
-      right_sub = right_sub.right unless right_sub.nil?
+    # checks whether the height difference between the 2 subtrees is more than 1
+    left_height = self.height(self.root.left.data)
+    right_height = self.height(self.root.right.data)
+    if left_height > right_height
+      return left_height - right_height <= 1
+    else
+      return right_height - left_height <= 1
     end
-    left_height = self.height(left_leaf)
-    right_height = self.height(right_leaf)
-
-    return left_height - right_height <= 1
   end
 
   def rebalance
-
+    self.root = build_tree(self.level_order)
   end
 
   # methods that accept a block
