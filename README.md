@@ -15,10 +15,10 @@
         returns the root node
     - #insert(value): inserts the given value to the Tree
     - #delete(value): deletes the given value from the Tree
-    - #find(value): returns the node with the given value from the Tree; returns nil if not found
+    - #find(value): returns the Node with the given value from the Tree; returns nil if not found
     - #height(Node): returns the number of edges from a given Node to the leaf Node 
     - #depth(Node): returns the number of edges from the root Node to the given Node
-    - #balanced?: returns a boolean value indicating whether the height of the subtrees for each node is
+    - #balanced?: returns a boolean value indicating whether the height of the subtrees for each Node is
         not more than 1
     - #rebalance: rebalances the Tree if the Tree is not balanced
 ### Methods that accept a block: returns an array is no block is given
