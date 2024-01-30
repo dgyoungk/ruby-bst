@@ -2,15 +2,13 @@ require_relative 'node.rb'
 
 class Tree
   attr_accessor :root, :values
-  @@arr_capacity = 5 + rand(15)
+  attr_reader :arr_capacity
+
 
   def initialize()
-    self.values = (1..Tree.arr_capacity).to_a
+    @arr_capacity = 5 + rand(15)
+    self.values = (1..arr_capacity).to_a
     self.root = build_tree(values)
-  end
-
-  def self.arr_capacity
-    @@arr_capacity
   end
 
   # sort and remove any duplicates before building the tree
@@ -87,53 +85,16 @@ class Tree
     end
   end
 
-  def height(temp_root = self.root, value)
+  def height(value, temp_root = self.find(value))
     return -1 if temp_root.nil?
-    # the amount of jumps it takes to get to a leaf node from the
-    # node with the given value
-    # so let's say value is 8
-    # once the node with value 8 is found
-    # loop through its subtrees and increment 1 if one is present
-    # for both left and right, return the greater of the 2
-    if temp_root.data > value
-      temp_root.node_height = height(temp_root.left, value)
-      return temp_root.node_height
-    elsif temp_root.data < value
-      temp_root.node_height = height(temp_root.right, value)
-      return temp_root.node_height
-    end
-    return 0 if temp_root.left.nil? && temp_root.right.nil?
-    l_count = 0
-    r_count = 0
-    # case where the node containing the value has one nil subtree
-    if temp_root.left.nil? || temp_root.right.nil?
-      current = temp_root.left.nil? ? temp_root.right : temp_root.left
-      if current.left.nil? && current.right.nil?
-        temp_root.node_height = 1
-        return temp_root.node_height
-      end
-      root_left = current.left
-      root_right = current.right
-      until root_left.nil? && root_right.nil?
-        l_count += 1 unless root_left.nil?
-        r_count += 1 unless root_right.nil?
-        root_left = root_left.left
-        root_right = root_right.right
-      end
-      temp_root.node_height = l_count >= r_count ? l_count : r_count
-      return temp_root.node_height
+    left_h = height(value, temp_root.left)
+    right_h = height(value, temp_root.right)
+    if left_h > right_h
+      height =  left_h + 1
+      return left_h + 1
     else
-      # case where the node containing the value has both subtress (L/R)
-      root_left = temp_root.left
-      root_right = temp_root.right
-      while !(root_left.nil? && root_right.nil?)
-        l_count += 1 unless root_left.nil?
-        r_count += 1 unless root_right.nil?
-        root_left = root_left.left unless root_left.nil?
-        root_right = root_right.right unless root_right.nil?
-      end
-      temp_root.node_height = l_count >= r_count ? l_count : r_count
-      return temp_root.node_height
+      height = right_h + 1
+      return right_h + 1
     end
   end
 
@@ -172,22 +133,11 @@ class Tree
   end
 
   # methods that accept a block
-  def level_order(temp_root = self.root)
+  # if no block is provided, an array of values should be returned
+  def level_order(temp_root = self.root, node_values = [], queue = [])
     # breadth-first: I need a queue
     # loop starting at root node, process then enqueue left then right
-    # after processing, dequeue the node
-    if block_given?
-      queue = []
-      queue.push(temp_root)
-      while !queue.empty?
-        current = queue.shift
-        yield(current)
-        queue.push(current.left) unless current.left.nil?
-        queue.push(current.right) unless current.right.nil?
-      end
-    else
-      node_values = []
-      queue = []
+    unless block_given?
       queue.push(temp_root)
       while !queue.empty?
         current = queue.shift
@@ -195,19 +145,60 @@ class Tree
         queue.push(current.left) unless current.left.nil?
         queue.push(current.right) unless current.right.nil?
       end
-      node_values
+      return node_values
     end
+    queue.push(temp_root)
+    while !queue.empty?
+      current = queue.shift
+      yield(current)
+      queue.push(current.left) unless current.left.nil?
+      queue.push(current.right) unless current.right.nil?
+    end
+    return %(traversal finished)
   end
 # TODO: implement the depth-first traversal methods
-  def preorder(temp_root = self.root)
-    yield
+  def preorder(current = self.root, node_values = [], &block)
+    # preorder follows the DLR route (Data, Left then Right)
+    unless block_given?
+      return if current.nil?
+      node_values << current.data
+      preorder(current.left, node_values)
+      preorder(current.right, node_values)
+      return node_values
+    end
+    return %(traversal finished) if current.nil?
+    yield(current)
+    preorder(current.left, &block)
+    preorder(current.right, &block)
   end
 
-  def inorder(temp_root = self.root)
-    yield
+  def inorder(temp_root = self.root, node_values = [], &block)
+    # inorder follows the LDR route
+    unless block_given?
+      return if temp_root.nil?
+      inorder(temp_root.left, node_values)
+      node_values << temp_root.data
+      inorder(temp_root.right, node_values)
+      return node_values
+    end
+    return %(traversal finished) if temp_root.nil?
+    inorder(temp_root.left, &block)
+    yield(temp_root)
+    inorder(temp_root.right, &block)
   end
 
-  def postorder(temp_root = self.root)
-    yield
+  def postorder(temp_root = self.root, node_values = [], &block)
+    # postorder follows the LRD route
+    unless block_given?
+      return if temp_root.nil?
+      postorder(temp_root.left, node_values)
+      postorder(temp_root.right, node_values)
+      node_values << temp_root.data
+      return node_values
+    end
+    return %(traversal finished) if temp_root.nil?
+    postorder(temp_root.left, &block)
+    postorder(temp_root.right, &block)
+    yield(temp_root)
   end
 end
